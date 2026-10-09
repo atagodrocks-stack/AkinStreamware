@@ -1,0 +1,33 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Akin.Core", "Akin.Core/Akin.Core.csproj", "{2F2F6B41-102A-4C0D-B87F-E8E2C9BA83A5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Akin.DeviceExplorer", "Akin.DeviceExplorer/Akin.DeviceExplorer.csproj", "{5B7DAB52-9A2E-47F6-90E9-83E4D4E7E01A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Akin.Tests", "Akin.Tests/Akin.Tests.csproj", "{0C7B4385-2D0C-47EA-9D84-94DF259F4708}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{2F2F6B41-102A-4C0D-B87F-E8E2C9BA83A5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2F2F6B41-102A-4C0D-B87F-E8E2C9BA83A5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2F2F6B41-102A-4C0D-B87F-E8E2C9BA83A5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2F2F6B41-102A-4C0D-B87F-E8E2C9BA83A5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5B7DAB52-9A2E-47F6-90E9-83E4D4E7E01A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5B7DAB52-9A2E-47F6-90E9-83E4D4E7E01A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5B7DAB52-9A2E-47F6-90E9-83E4D4E7E01A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5B7DAB52-9A2E-47F6-90E9-83E4D4E7E01A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0C7B4385-2D0C-47EA-9D84-94DF259F4708}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0C7B4385-2D0C-47EA-9D84-94DF259F4708}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0C7B4385-2D0C-47EA-9D84-94DF259F4708}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0C7B4385-2D0C-47EA-9D84-94DF259F4708}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
