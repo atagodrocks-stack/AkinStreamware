@@ -4,6 +4,9 @@ public sealed class AudioDeviceEnumerator : IDeviceEnumerator
 {
     public IReadOnlyList<DeviceDescriptor> Enumerate()
     {
+#if WINDOWS
+        return WindowsAudioDeviceEnumerator.EnumerateAll();
+#else
         return new List<DeviceDescriptor>
         {
             new()
@@ -15,9 +18,10 @@ public sealed class AudioDeviceEnumerator : IDeviceEnumerator
                 Direction = DeviceDirection.InputOutput,
                 State = DeviceState.Available,
                 IsDefault = true,
-                Notes = "Placeholder enumeration result; real Windows WASAPI implementation is pending."
+                Notes = "Platform-specific WASAPI enumeration is available only on Windows."
             }
         };
+#endif
     }
 }
 
@@ -25,6 +29,9 @@ public sealed class VideoDeviceEnumerator : IDeviceEnumerator
 {
     public IReadOnlyList<DeviceDescriptor> Enumerate()
     {
+#if WINDOWS
+        return WindowsVideoDeviceEnumerator.EnumerateAll();
+#else
         return new List<DeviceDescriptor>
         {
             new()
@@ -35,8 +42,9 @@ public sealed class VideoDeviceEnumerator : IDeviceEnumerator
                 Type = DeviceType.Video,
                 Direction = DeviceDirection.Input,
                 State = DeviceState.Available,
-                Notes = "Placeholder enumeration result; real Windows Media Foundation implementation is pending."
+                Notes = "Platform-specific Media Foundation enumeration is available only on Windows."
             }
         };
+#endif
     }
 }
