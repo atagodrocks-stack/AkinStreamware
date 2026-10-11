@@ -1,3 +1,5 @@
+using System.Management;
+
 namespace Akin.Core.Devices;
 
 internal static class WindowsAudioDeviceEnumerator
@@ -9,17 +11,63 @@ internal static class WindowsAudioDeviceEnumerator
             return Array.Empty<DeviceDescriptor>();
         }
 
-        return new[]
+        var results = new List<DeviceDescriptor>();
+
+        try
         {
-            new DeviceDescriptor
+            using var searcher = new ManagementObjectSearcher(
+                "SELECT DeviceID, Name, PNPDeviceID, Status FROM Win32_PnPEntity WHERE (PNPClass = 'AudioEndpoint' OR PNPClass = 'MediaCenter' OR PNPClass = 'AudioDevice')");
+
+            foreach (ManagementObject device in searcher.Get())
             {
-                Id = "windows-audio-placeholder",
-                Name = "Windows audio device placeholder",
-                FriendlyName = "Windows audio device placeholder",
+                var id = device["DeviceID"]?.ToString();
+                var name = device["Name"]?.ToString() ?? "Unknown audio device";
+                var pnpId = device["PNPDeviceID"]?.ToString();
+
+                results.Add(new DeviceDescriptor
+                {
+                    Id = id ?? $"audio-{results.Count}",
+                    Name = name,
+                    FriendlyName = name,
+                    Type = DeviceType.Audio,
+                    Direction = DeviceDirection.InputOutput,
+                    State = string.Equals(device["Status"]?.ToString(), "OK", StringComparison.OrdinalIgnoreCase)
+                        ? DeviceState.Available
+                        : DeviceState.Unavailable,
+                    EndpointId = id,
+                    DevicePath = pnpId,
+                    IsUsb = pnpId?.IndexOf("USB", StringComparison.OrdinalIgnoreCase) >= 0,
+                    IsBluetooth = pnpId?.IndexOf("BTH", StringComparison.OrdinalIgnoreCase) >= 0,
+                    IsVirtual = pnpId?.IndexOf("ROOT\\VIRTUAL", StringComparison.OrdinalIgnoreCase) >= 0,
+                    Notes = "Enumerated via Windows WMI (PnPEntity)."
+                });
+            }
+        }
+        catch
+        {
+            results.Add(new DeviceDescriptor
+            {
+                Id = "audio-wmi-fallback",
+                Name = "Audio device enumeration failed",
+                FriendlyName = "Audio device enumeration failed",
                 Type = DeviceType.Audio,
                 Direction = DeviceDirection.InputOutput,
                 State = DeviceState.Unavailable,
-                Notes = "MMDevice/WASAPI enumeration is intentionally not yet implemented in this build."
+                Notes = "Windows audio enumeration failed. This must be validated on a real Windows machine."
+            });
+        }
+
+        return results.Count > 0 ? results : new[]
+        {
+            new DeviceDescriptor
+            {
+                Id = "audio-none-found",
+                Name = "No audio devices found",
+                FriendlyName = "No audio devices found",
+                Type = DeviceType.Audio,
+                Direction = DeviceDirection.InputOutput,
+                State = DeviceState.Unavailable,
+                Notes = "No audio devices were reported by Windows WMI."
             }
         };
     }
@@ -34,17 +82,62 @@ internal static class WindowsVideoDeviceEnumerator
             return Array.Empty<DeviceDescriptor>();
         }
 
-        return new[]
+        var results = new List<DeviceDescriptor>();
+
+        try
         {
-            new DeviceDescriptor
+            using var searcher = new ManagementObjectSearcher(
+                "SELECT DeviceID, Name, PNPDeviceID, Status FROM Win32_PnPEntity WHERE PNPClass = 'Camera' OR PNPClass = 'Image' OR PNPClass = 'MEDIA' OR PNPClass = 'VideoCaptureDevice'");
+
+            foreach (ManagementObject device in searcher.Get())
             {
-                Id = "windows-video-placeholder",
-                Name = "Windows video device placeholder",
-                FriendlyName = "Windows video device placeholder",
+                var id = device["DeviceID"]?.ToString();
+                var name = device["Name"]?.ToString() ?? "Unknown video device";
+                var pnpId = device["PNPDeviceID"]?.ToString();
+
+                results.Add(new DeviceDescriptor
+                {
+                    Id = id ?? $"video-{results.Count}",
+                    Name = name,
+                    FriendlyName = name,
+                    Type = DeviceType.Video,
+                    Direction = DeviceDirection.Input,
+                    State = string.Equals(device["Status"]?.ToString(), "OK", StringComparison.OrdinalIgnoreCase)
+                        ? DeviceState.Available
+                        : DeviceState.Unavailable,
+                    EndpointId = id,
+                    DevicePath = pnpId,
+                    IsUsb = pnpId?.IndexOf("USB", StringComparison.OrdinalIgnoreCase) >= 0,
+                    IsVirtual = pnpId?.IndexOf("ROOT\\VIRTUAL", StringComparison.OrdinalIgnoreCase) >= 0,
+                    Notes = "Enumerated via Windows WMI (PnPEntity)."
+                });
+            }
+        }
+        catch
+        {
+            results.Add(new DeviceDescriptor
+            {
+                Id = "video-wmi-fallback",
+                Name = "Video device enumeration failed",
+                FriendlyName = "Video device enumeration failed",
                 Type = DeviceType.Video,
                 Direction = DeviceDirection.Input,
                 State = DeviceState.Unavailable,
-                Notes = "Media Foundation enumeration is intentionally not yet implemented in this build."
+                Notes = "Windows video enumeration failed. This must be validated on a real Windows machine."
+            });
+        }
+
+        return results.Count > 0 ? results : new[]
+        {
+            new DeviceDescriptor
+            {
+                Id = "video-none-found",
+                Name = "No video devices found",
+                FriendlyName = "No video devices found",
+                Type = DeviceType.Video,
+                Direction = DeviceDirection.Input,
+                State = DeviceState.Unavailable,
+                Notes = "No video devices were reported by Windows WMI."
             }
         };
     }
